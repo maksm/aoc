@@ -6,11 +6,6 @@ def count_floor(line):
     return sum(1 for x in line if x == '(') + sum(-1 for x in line if x ==')')
 
 # part 1
-for line in lines_t:
-    print(count_floor(line))
-
-print()
-
 print(count_floor(lines[0]))
 
 # part 2
