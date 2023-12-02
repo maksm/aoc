@@ -1,10 +1,11 @@
 day = 17
 
-with open(f'2015/inputs/{day}.txt','r') as f: lines = f.read().splitlines()
+with open(f"2015/inputs/{day}.txt", "r") as f:
+    lines = f.read().splitlines()
 
 test = [20, 15, 10, 5, 5]
 
-#buckets = test
+# buckets = test
 target = 150
 buckets = [int(x) for x in lines]
 

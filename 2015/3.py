@@ -1,10 +1,11 @@
 day = 3
 
-with open(f'2015/inputs/{day}.txt','r') as f: lines = f.read().splitlines()
+with open(f"2015/inputs/{day}.txt", "r") as f:
+    lines = f.read().splitlines()
 
 line = lines[0]
 
-map = {'>': 1, '^': 1j, '<': -1, 'v': -1j}
+map = {">": 1, "^": 1j, "<": -1, "v": -1j}
 visited = set()
 cur = 0
 visited.add(cur)
