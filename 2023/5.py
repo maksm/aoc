@@ -1,7 +1,7 @@
 day = 5
 
-with open(f"2023/inputs/{day}.txt", "r") as f:
-    lines = f.read().splitlines()
+seeds, *maps = open(f"2023/inputs/{day}.txt", "r").read().split("\n\n")
+
 
 test = """
 seeds: 79 14 55 13
@@ -39,59 +39,48 @@ humidity-to-location map:
 56 93 4
 """
 
-# lines = test.splitlines()[1:]
+# seeds, *maps = test.split("\n\n")
 
-seeds = list(map(int, lines[0].split()[1:]))
-
-maps = {}
-k = None
-for line in lines[2:]:
-    if len(line) < 3:
-        continue
-    if line[0].isalpha():
-        k = line.split()[0].split("-")
-        if k[0] not in maps:
-            maps[k[0]] = {}
-        if k[2] not in maps[k[0]]:
-            maps[k[0]][k[2]] = []
-    else:
-        maps[k[0]][k[2]].append(list(map(int, line.split())))
+seeds = [int(seed) for seed in seeds.split()[1:]]
+maps = [[list(map(int, line.split())) for line in m.splitlines()[1:]] for m in maps]
 
 s0 = 1000000000000000000
 for x in seeds:
-    cur = "seed"
-    next = None
-    text = f"Seed {x},"
-    while next != "location":
-        next = list(maps[cur].keys())[0]
+    for m in maps:
         y = x
-        for d, s, r in maps[cur][next]:
+        for d, s, r in m:
             if s <= x < s + r:
                 y = d + (x - s)
                 break
-        text += f" {next} {y},"
         x = y
-        cur = next
-    text = text[:-1] + "."
     s0 = min(s0, y)
 print(s0)
 
 # part 2
 
-s0 = 1000000000000000000
+locations = []
 for i in range(0, len(seeds), 2):
-    print(seeds[i], seeds[i + 1], seeds[i] + seeds[i + 1])
-    for j in range(seeds[i], seeds[i] + seeds[i + 1]):
-        cur = "seed"
-        next = None
-        while next != "location":
-            next = list(maps[cur].keys())[0]
-            y = x
-            for d, s, r in maps[cur][next]:
-                if s <= x < s + r:
-                    y = d + (x - s)
-                    break
-            x = y
-            cur = next
-        s0 = min(s0, y)
-print(s0)
+    ranges = [[seeds[i], seeds[i + 1] + seeds[i]]]
+    results = []
+    for m in maps:
+        while ranges:
+            sr, er = ranges.pop()
+            for d, s, r in m:
+                em = s + r
+                n = d - s
+                if em <= sr or er <= s:  # no overlap
+                    continue
+                if sr < s:
+                    ranges.append([sr, s])
+                    sr = s
+                if em < er:
+                    ranges.append([em, er])
+                    er = em
+                results.append([sr + n, er + n])
+                break
+            else:
+                results.append([sr, er])
+        ranges = results
+        results = []
+    locations += ranges
+print(min(loc[0] for loc in locations))
